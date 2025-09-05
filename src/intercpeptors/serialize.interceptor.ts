@@ -24,28 +24,29 @@ export class SerializeInterceptor implements NestInterceptor {
   intercept(
     context: ExecutionContext,
     next: CallHandler<any>,
-  ): Observable<any> | Promise<Observable<any>> {
+  ): Observable<any> {
     return next.handle().pipe(
-      map((data: any) => {
+      map((res: any) => {
+        const { data, message } = res;
+
         let transformedData = data;
 
-        // If data is array -> map over it
+        // Array case
         if (Array.isArray(data)) {
           transformedData = data.map((item) =>
             plainToInstance(this.dto, item, { excludeExtraneousValues: true }),
           );
         }
-        // If data is object -> transform directly
+        // Object case
         else if (data && typeof data === 'object') {
           transformedData = plainToInstance(this.dto, data, {
             excludeExtraneousValues: true,
           });
         }
 
-        // Wrap with ResponseDto
         const response: ResponseDto = {
           status: 'success',
-          message: 'Request processed successfully',
+          message: message || 'Success', // fallback
           data: transformedData,
         };
 

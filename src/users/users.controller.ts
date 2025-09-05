@@ -27,32 +27,46 @@ import { AdminGuard } from '../guards/admin.guard';
 export class UsersController {
   constructor(private usersService: UsersService) {}
   @Get()
-  getAllUser(@Query('offset') offset = '0', @Query('limit') limit = '10') {
-    return this.usersService.getAllUsers(parseInt(offset), parseInt(limit));
+  async getAllUser(
+    @Query('offset') offset = '0',
+    @Query('limit') limit = '10',
+  ) {
+    const users = await this.usersService.getAllUsers(
+      parseInt(offset),
+      parseInt(limit),
+    );
+
+    return {
+      message: 'users fetched successfully',
+      data: users,
+    };
   }
 
   @Get('getMe')
   getCurrentUser(@CurrentUser() user: User) {
-    return user;
+    return { data: user, message: 'user fetched successfully' };
   }
 
   @Get('/:id')
-  getUserById(
+  async getUserById(
     @Param(
       'id',
       new ParseUUIDPipe({ errorHttpStatusCode: HttpStatus.BAD_REQUEST }),
     )
     id: string,
   ) {
-    return this.usersService.getUserById(id);
+    const fetchedUser = await this.usersService.getUserById(id);
+    return { data: fetchedUser, message: 'user fetched successfully' };
   }
 
   @Patch('updateMe')
-  updateCurrentUser(
+  async updateCurrentUser(
     @Body() body: UpdateCustomerProfileDto,
     @CurrentUser() user: User,
   ) {
-    return this.usersService.updateUser(body, user.id);
+    const updateUser = await this.usersService.updateUser(body, user.id);
+
+    return { data: updateUser, message: 'user fetched successfully' };
   }
 
   // @UseInterceptors(undefined) // disables interceptor for this route
