@@ -1,8 +1,12 @@
+<<<<<<< HEAD
 import {
   BadRequestException,
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
+=======
+import { BadRequestException, Injectable } from '@nestjs/common';
+>>>>>>> 995a7913dfdc5689d95814cddb01bff7927ba347
 import { UsersService } from '../users/users.service';
 import { randomBytes } from 'crypto';
 import { promisify } from 'util';
