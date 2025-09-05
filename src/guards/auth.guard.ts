@@ -2,7 +2,6 @@ import {
   CanActivate,
   ExecutionContext,
   Injectable,
-  ForbiddenException,
   UnauthorizedException,
 } from '@nestjs/common';
 
@@ -17,9 +16,10 @@ export class AuthGuard implements CanActivate {
       throw new UnauthorizedException('you are not logged in');
     } // not logged in
 
-    if (!user.isActive) {
-      throw new UnauthorizedException('Your account is deactivated');
-    }
+    // when the user deactivate the acc i will sign him out
+    // if (!user.isActive) {
+    //   throw new UnauthorizedException('Your account is deactivated');
+    // }
 
     return true;
   }

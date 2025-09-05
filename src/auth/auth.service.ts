@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { UsersService } from '../users/users.service';
 import { randomBytes } from 'crypto';
 import { promisify } from 'util';
@@ -45,6 +49,12 @@ export class AuthService {
 
     if (!user) {
       throw new BadRequestException('wrong email or password');
+    }
+
+    if (!user.isActive) {
+      throw new UnauthorizedException(
+        'your account is deactivated, please reach our support to activate it',
+      );
     }
 
     const [salt, storedPassword] = user.password.split('.');

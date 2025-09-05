@@ -22,6 +22,9 @@ export class UserDto {
   email: string;
 
   @Expose()
+  role: string;
+
+  @Expose()
   @Type(() => CustomerProfile)
   customerProfile: CustomerProfile;
 }

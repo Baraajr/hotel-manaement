@@ -8,7 +8,9 @@ import {
   ParseUUIDPipe,
   Patch,
   Query,
+  Session,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { UpdateCustomerProfileDto } from './dtos/update-user.dto';
@@ -53,9 +55,15 @@ export class UsersController {
     return this.usersService.updateUser(body, user.id);
   }
 
+  // @UseInterceptors(undefined) // disables interceptor for this route
   @Delete('deleteMe')
-  deleteMe(@CurrentUser() user: User) {
-    return this.usersService.deactivateUser(user.id);
+  async deleteMe(@CurrentUser() user: User, @Session() session: any) {
+    await this.usersService.deactivateUser(user.id);
+    session.userId = null;
+    return Promise.resolve({
+      status: 'success',
+      message: 'account deactivated successfully',
+    });
   }
 
   // admin Routes

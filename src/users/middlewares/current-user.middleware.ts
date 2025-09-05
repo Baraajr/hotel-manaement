@@ -15,10 +15,14 @@ declare module 'express-serve-static-core' {
 export class CurrentUserMiddleware implements NestMiddleware {
   constructor(private usersService: UsersService) {}
   async use(req: Request, res: Response, next: NextFunction) {
+    console.log('getting userId from session');
     const { userId } = req.session || {};
+    // if user is logged in it will attach the user to request object
+    console.log('userId', userId);
     if (userId) {
       const user = await this.usersService.getUserById(userId);
-      if (user) {
+      console.log('user', user);
+      if (user && user.isActive) {
         req.currentUser = user;
       }
     }
