@@ -1,4 +1,14 @@
-import { Body, Controller, HttpCode, Post, Session } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpCode,
+  Param,
+  Patch,
+  Post,
+  Query,
+  Session,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { Serialize } from '../intercpeptors/serialize.interceptor';
 import { UserDto } from '../users/dtos/user.dto';
@@ -8,11 +18,16 @@ import { SignupDto } from './dto/signup.dto';
 @Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
-  @Serialize(UserDto)
+  // @Serialize(UserDto)
   @Post('signup')
-  async signup(@Body() body: SignupDto, @Session() session: any) {
+  async signup(@Body() body: SignupDto) {
     const user = await this.authService.signup(body);
-    session.userId = user.id;
+    return {
+      status: 'success',
+      message: 'User registered successfully. Please verify your email.',
+      data: user,
+    };
+
     return user;
   }
 
@@ -36,5 +51,27 @@ export class AuthController {
       status: 'success',
       message: 'signed out successfully',
     };
+  }
+
+  @Post('forgot-password')
+  forgetPaswword(@Body() body: { email: string }) {
+    return this.authService.forgotPassword(body.email);
+  }
+
+  @Patch('reset-password/:token')
+  resetPassword(
+    @Param('token') token: string,
+    @Body() body: { password: string; confirmPassword: string },
+  ) {
+    return this.authService.resetPassword(
+      token,
+      body.password,
+      body.confirmPassword,
+    );
+  }
+
+  @Get('verify-email')
+  async verifyEmail(@Query('token') token: string) {
+    return this.authService.verifyEmail(token);
   }
 }
