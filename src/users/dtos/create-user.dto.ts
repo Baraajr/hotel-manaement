@@ -1,10 +1,11 @@
 // import { Type } from 'class-transformer';
+import { Type } from 'class-transformer';
 import {
-  // IsDefined,
+  IsDefined,
   IsEmail,
   IsOptional,
   IsString,
-  // ValidateNested,
+  ValidateNested,
 } from 'class-validator';
 
 export class CreateCustomerProfileDto {
@@ -31,23 +32,23 @@ export class CreateUserDto {
   @IsString()
   password: string;
 
-  @IsString()
-  fullName: string;
+  // @IsString()
+  // fullName: string;
 
-  @IsOptional()
-  @IsString()
-  phone?: string;
+  // @IsOptional()
+  // @IsString()
+  // phone?: string;
 
-  @IsOptional()
-  @IsString()
-  idPassport?: string;
+  // @IsOptional()
+  // @IsString()
+  // idPassport?: string;
 
-  @IsOptional()
-  @IsString()
-  address?: string;
+  // @IsOptional()
+  // @IsString()
+  // address?: string;
 
-  // @IsDefined() // <-- this ensures the property exists
-  // @ValidateNested()
-  // @Type(() => CreateCustomerProfileDto)
-  // customerProfile: CreateCustomerProfileDto;
+  @IsDefined() // <-- this ensures the property exists
+  @ValidateNested()
+  @Type(() => CreateCustomerProfileDto)
+  customerProfile: CreateCustomerProfileDto;
 }

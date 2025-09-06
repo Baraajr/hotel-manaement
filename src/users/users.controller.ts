@@ -10,7 +10,6 @@ import {
   Query,
   Session,
   UseGuards,
-  UseInterceptors,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { UpdateCustomerProfileDto } from './dtos/update-user.dto';
@@ -20,6 +19,7 @@ import { AuthGuard } from '../guards/auth.guard';
 import { Serialize } from '../intercpeptors/serialize.interceptor';
 import { UserDto } from './dtos/user.dto';
 import { AdminGuard } from '../guards/admin.guard';
+import { ApiBadRequestResponse } from '@nestjs/swagger';
 
 @Serialize(UserDto)
 @UseGuards(AuthGuard)

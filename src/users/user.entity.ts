@@ -22,6 +22,18 @@ export class User {
   @Column()
   password: string;
 
+  @Column({ type: 'varchar', nullable: true })
+  passwordResetToken: string | null;
+
+  @Column({ type: 'timestamptz', nullable: true })
+  passwordResetExpires: Date | null;
+
+  @Column({ default: false })
+  isEmailVerified: boolean;
+
+  @Column({ type: 'text', nullable: true })
+  emailVerificationToken: string | null;
+
   @Column({
     type: 'enum',
     enum: Roles,

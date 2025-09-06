@@ -1,16 +1,22 @@
+import { MoreThan } from 'typeorm';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './user.entity';
 import { Repository } from 'typeorm';
-import {
-  CreateCustomerProfileDto,
-  CreateUserDto,
-} from './dtos/create-user.dto';
 import { CustomerProfile } from './customer-profile.entity';
+import { CreateUserDto } from './dtos/create-user.dto';
 
 @Injectable()
 export class UsersService {
-  constructor(@InjectRepository(User) private repo: Repository<User>) {}
+  constructor(
+    @InjectRepository(User) private repo: Repository<User>,
+    @InjectRepository(CustomerProfile)
+    private profileRepo: Repository<CustomerProfile>,
+  ) {}
+
+  async saveUser(user: Partial<User>) {
+    await this.repo.save(user);
+  }
 
   getAllUsers(offset: number, limit: number) {
     return this.repo.find({
@@ -35,22 +41,28 @@ export class UsersService {
     return user;
   }
 
-  async createUser(payload: CreateUserDto) {
-    const customerProfile: CreateCustomerProfileDto = {
-      fullName: payload.fullName,
-      idPassport: payload.idPassport,
-      address: payload.address,
-      phone: payload.phone,
-    };
-    const user = this.repo.create({
-      email: payload.email,
-      password: payload.password,
-      customerProfile, // handled by cascade
+  async getUserByToken(passwordResetToken: string) {
+    const now = new Date();
+
+    const user = await this.repo.findOne({
+      where: {
+        passwordResetToken,
+        passwordResetExpires: MoreThan(now), // token still valid
+      },
     });
 
-    await this.repo.save(user);
-
     return user;
+  }
+
+  async getUserByVerificationToken(token: string) {
+    return this.repo.findOne({
+      where: { emailVerificationToken: token },
+    });
+  }
+
+  async createUser(payload: CreateUserDto) {
+    const user = this.repo.create(payload); // create User entity
+    return await this.repo.save(user); // saves user + customerProfile
   }
 
   async updateUser(payload: Partial<CustomerProfile>, id: string) {
