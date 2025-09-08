@@ -1,18 +1,14 @@
 import { MoreThan } from 'typeorm';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { User } from './user.entity';
+import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
-import { CustomerProfile } from './customer-profile.entity';
+import { CustomerProfile } from './entities/customer-profile.entity';
 import { CreateUserDto } from './dtos/create-user.dto';
 
 @Injectable()
 export class UsersService {
-  constructor(
-    @InjectRepository(User) private repo: Repository<User>,
-    @InjectRepository(CustomerProfile)
-    private profileRepo: Repository<CustomerProfile>,
-  ) {}
+  constructor(@InjectRepository(User) private repo: Repository<User>) {}
 
   async saveUser(user: Partial<User>) {
     await this.repo.save(user);
